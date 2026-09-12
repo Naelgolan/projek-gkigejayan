@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GKI Gejayan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gki-cement': '#D4D5D1',
+                        'gki-stone': '#5D5E5B',
+                        'gki-wood': '#41301F',
+                        'gki-tan': '#958C79',
+                        'gki-cream': '#D9D2B1',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #D4D5D1;
+        }
+
+        .glass-nav {
+            background: rgba(65, 48, 31, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-gki-stone overflow-x-hidden">
+
+    <!-- Nav -->
+    <nav class="fixed w-full z-50 py-6 transition-all duration-300 glass-nav">
+        <div class="container mx-auto px-6 flex justify-between items-center text-white">
+            <div class="flex items-center gap-3">
+                <img src="logo polos.PNG" class="h-10 invert" alt="Logo">
+                <span class="font-serif text-xl tracking-widest uppercase">GKI Gejayan</span>
+            </div>
+            <div class="hidden md:flex gap-8 font-medium">
+                <a href="#" class="hover:text-gki-tan transition-colors">Beranda</a>
+                <a href="#about" class="hover:text-gki-tan transition-colors">Tentang Kami</a>
+                <a href="#services" class="hover:text-gki-tan transition-colors">Pelayanan</a>
+                <a href="#schedule" class="hover:text-gki-tan transition-colors">Jadwal</a>
+                <a href="#"
+                    class="bg-gki-tan px-6 py-2 rounded-full hover:bg-gki-cream hover:text-gki-wood transition-all">Kontak</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="h-screen relative flex items-center justify-center">
+        <img src="luar.jpg" class="absolute inset-0 w-full h-full object-cover brightness-[0.4]" alt="GKI Gejayan">
+        <div class="relative z-10 text-center text-white px-6">
+            <h1 class="text-5xl md:text-8xl mb-6">Bersama Bertumbuh <br> <span class="italic font-normal">Dalam Kasih
+                    Kristus</span></h1>
+            <p class="text-lg md:text-xl tracking-[0.3em] uppercase opacity-70 mb-10">Gereja Kristen Indonesia Gejayan
+            </p>
+            <a href="#schedule"
+                class="bg-white text-gki-wood px-10 py-5 rounded-full font-bold hover:bg-gki-tan hover:text-white transition-all shadow-2xl inline-block">GABUNG
+                IBADAH →</a>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="py-32 bg-gki-cement">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-20 items-center">
+                <div class="relative">
+                    <img src="dalam.png" class="rounded-3xl shadow-2xl" alt="Interior">
+                </div>
+                <div>
+                    <span class="text-gki-tan font-bold tracking-widest uppercase text-xs mb-4 block">Sejarah &
+                        Visi</span>
+                    <h2 class="text-4xl md:text-6xl text-gki-wood mb-8 leading-tight">Membangun Jemaat yang Relevan</h2>
+                    <p class="text-lg mb-8 opacity-80 leading-relaxed font-light">GKI Gejayan hadir sebagai saksi kasih
+                        Kristus di Yogyakarta, melayani dengan hati yang tulus untuk membawa transformasi bagi sesama.
+                    </p>
+                    <div class="grid grid-cols-2 gap-10">
+                        <div>
+                            <h3 class="text-xl mb-2 italic">Visi</h3>
+                            <p class="text-sm opacity-70 leading-relaxed">Menjadi Komunitas anak-anak Bapa yang bertumbuh dinamis dan berdampak bagi masyarakat multikultur di Indonesia.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-xl mb-2 italic">Misi</h3>
+                            <p class="text-sm opacity-70 leading-relaxed">Membina warga jemaat GKI Gejayan agar siap menerima pengutusan Tuhan kemanapun.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule -->
+    <section id="schedule" class="py-24 bg-gki-wood text-white">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-end mb-16">
+                <div>
+                    <span class="text-gki-tan font-bold tracking-widest uppercase text-xs mb-4 block">Waktu
+                        Ibadah</span>
+                    <h2 class="text-5xl">Gunakan Waktu Anda</h2>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-10 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+                    <span
+                        class="bg-gki-tan px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-8 inline-block">Minggu
+                        06:30</span>
+                    <h3 class="text-3xl mb-2">Kebaktian Umum 1</h3>
+                    <p class="text-white/40 text-sm">Onsite & Online Streaming</p>
+                </div>
+                <div class="p-10 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+                    <span
+                        class="bg-gki-tan px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-8 inline-block">Minggu
+                        09:00</span>
+                    <h3 class="text-3xl mb-2">Kebaktian Umum 2</h3>
+                    <p class="text-white/40 text-sm">Onsite - Ibadah Pagi</p>
+                </div>
+                <div class="p-10 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+                    <span
+                        class="bg-gki-tan px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-8 inline-block">Minggu
+                        17:00</span>
+                    <h3 class="text-3xl mb-2">Kebaktian Umum 3</h3>
+                    <p class="text-white/40 text-sm">Onsite - Ibadah Sore</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 bg-gki-cement text-gki-stone border-t border-black/5">
+        <div class="container mx-auto px-6 text-center">
+            <img src="Logo warna.PNG" class="h-20 mx-auto mb-10" alt="Logo">
+            <p class="text-sm tracking-widest opacity-60">© 2026 GKI GEJAYAN by Natanael Nainggolan.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

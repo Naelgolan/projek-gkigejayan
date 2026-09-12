@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gki-cement: #D4D5D1;
+  --gki-stone: #5D5E5B;
+  --gki-wood: #41301F;
+  --gki-tan: #958C79;
+  --gki-cream: #D9D2B1;
+}
+
+body {
+  @apply bg-gki-cement;
+}
+
+h1, h2, h3, h4 {
+  @apply font-serif;
+}
+
+.glass-card {
+  @apply bg-white/10 backdrop-blur-md border border-white/20;
+}
