@@ -1157,7 +1157,7 @@ const App = () => {
 
     return (
         <AuthProvider>
-            <Router>
+            <Router basename="/projek-gkigejayan/">
                 <Routes>
                     <Route path="/" element={homePageContent} />
                     <Route path="/login" element={<Login />} />
