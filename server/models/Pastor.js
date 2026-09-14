@@ -11,7 +11,7 @@ const Pastor = sequelize.define('Pastor', {
         allowNull: false,
     },
     image: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
     },
     bio: {
         type: DataTypes.TEXT,

@@ -19,7 +19,7 @@ const Event = sequelize.define('Event', {
         allowNull: true
     },
     imageUrl: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true
     },
     documentUrl: {

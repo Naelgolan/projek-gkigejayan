@@ -23,6 +23,10 @@ const Schedule = sequelize.define('Schedule', {
     image: {
         type: DataTypes.TEXT,
     },
+    order: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
 });
 
 module.exports = Schedule;

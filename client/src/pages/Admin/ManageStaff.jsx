@@ -5,7 +5,7 @@ import { Users, Phone, Mail, Clock, MapPin, Edit, Trash2, Plus, Save, Building, 
 import { Link } from 'react-router-dom';
 
 const ManageStaff = () => {
-    const { admin } = useContext(AuthContext);
+    const { admin, token: contextToken } = useContext(AuthContext);
     const [officeInfo, setOfficeInfo] = useState({
         officeName: '',
         phone: '',
@@ -52,18 +52,25 @@ const ManageStaff = () => {
         }
     };
 
+    const getAuthHeaders = () => {
+        const token = contextToken || localStorage.getItem('token');
+        return {
+            'x-auth-token': token,
+            Authorization: `Bearer ${token}`
+        };
+    };
+
     const handleUpdateOfficeInfo = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
             const res = await axios.put('/api/office-info', officeInfo, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: getAuthHeaders()
             });
             setOfficeInfo(res.data);
             setOfficeMsg('Informasi kantor berhasil diperbarui!');
             setTimeout(() => setOfficeMsg(''), 4000);
         } catch (err) {
-            alert('Gagal mengupdate informasi kantor');
+            alert('Gagal mengupdate informasi kantor: ' + (err.response?.data?.message || err.message));
         }
     };
 
@@ -97,8 +104,7 @@ const ManageStaff = () => {
     const handleSaveStaff = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            const headers = { Authorization: `Bearer ${token}` };
+            const headers = getAuthHeaders();
 
             if (editingStaff) {
                 await axios.put(`/api/staff/${editingStaff.id}`, staffForm, { headers });
@@ -111,22 +117,22 @@ const ManageStaff = () => {
             fetchData();
             setTimeout(() => setStaffMsg(''), 4000);
         } catch (err) {
-            alert('Gagal menyimpan data staf');
+            console.error('Save staff error:', err.response?.data || err);
+            alert('Gagal menyimpan data staf: ' + (err.response?.data?.message || err.message));
         }
     };
 
     const handleDeleteStaff = async (id) => {
         if (!window.confirm('Yakin ingin menghapus staf pekerja ini?')) return;
         try {
-            const token = localStorage.getItem('token');
             await axios.delete(`/api/staff/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: getAuthHeaders()
             });
             setStaffMsg('Staf pekerja berhasil dihapus');
             fetchData();
             setTimeout(() => setStaffMsg(''), 4000);
         } catch (err) {
-            alert('Gagal menghapus staf');
+            alert('Gagal menghapus staf: ' + (err.response?.data?.message || err.message));
         }
     };
 
@@ -379,15 +385,69 @@ const ManageStaff = () => {
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-semibold text-gki-wood mb-1">URL Foto Staf (Opsional)</label>
-                                <input
-                                    type="text"
-                                    value={staffForm.image}
-                                    onChange={(e) => setStaffForm({ ...staffForm, image: e.target.value })}
-                                    className="w-full px-4 py-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-gki-tan text-sm"
-                                    placeholder="/logo polos.PNG atau URL Foto"
-                                />
+                            <div className="p-4 bg-gki-cream/30 border border-gki-tan/30 rounded-xl space-y-3">
+                                <label className="block text-xs font-bold text-gki-wood uppercase tracking-wider">Foto Staf Pekerja</label>
+                                
+                                <div>
+                                    <span className="text-xs font-semibold text-gki-stone block mb-1">A. Pilih File Gambar dari Perangkat (Laptop/HP):</span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    const img = new Image();
+                                                    img.src = reader.result;
+                                                    img.onload = () => {
+                                                        const canvas = document.createElement('canvas');
+                                                        const maxDim = 1200;
+                                                        let width = img.width;
+                                                        let height = img.height;
+                                                        if (width > maxDim || height > maxDim) {
+                                                            if (width > height) { height = Math.round((height * maxDim) / width); width = maxDim; }
+                                                            else { width = Math.round((width * maxDim) / height); height = maxDim; }
+                                                        }
+                                                        canvas.width = width;
+                                                        canvas.height = height;
+                                                        const ctx = canvas.getContext('2d');
+                                                        ctx.drawImage(img, 0, 0, width, height);
+                                                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                                                        setStaffForm(prev => ({ ...prev, image: compressedBase64 }));
+                                                    };
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                        className="w-full text-xs text-gki-wood file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gki-wood file:text-white hover:file:bg-gki-tan cursor-pointer"
+                                    />
+                                </div>
+
+                                <div className="relative flex py-1 items-center">
+                                    <div className="flex-grow border-t border-gki-tan/20"></div>
+                                    <span className="flex-shrink mx-3 text-xs text-gki-stone uppercase font-bold">atau</span>
+                                    <div className="flex-grow border-t border-gki-tan/20"></div>
+                                </div>
+
+                                <div>
+                                    <span className="text-xs font-semibold text-gki-stone block mb-1">B. URL Gambar (Link External):</span>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-2 border rounded-lg text-sm bg-white"
+                                        value={staffForm.image}
+                                        onChange={(e) => setStaffForm({ ...staffForm, image: e.target.value })}
+                                        placeholder="/logo polos.PNG atau URL Foto"
+                                    />
+                                </div>
+
+                                {staffForm.image && (
+                                    <div className="mt-2 flex items-center gap-3 p-2 bg-white rounded-lg border border-gki-tan/20 shadow-sm">
+                                        <span className="text-xs font-semibold text-gki-wood">Preview Foto:</span>
+                                        <img src={staffForm.image} alt="Preview" className="h-12 w-12 object-cover rounded-full border shadow-sm" />
+                                        <span className="text-xs text-emerald-600 font-medium">Foto Siap Dipakai</span>
+                                    </div>
+                                )}
                             </div>
 
                             <div>

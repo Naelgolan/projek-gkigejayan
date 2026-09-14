@@ -166,15 +166,25 @@ const App = () => {
         exit: (d) => ({ zIndex: 0, x: d < 0 ? 1000 : -1000, opacity: 0 })
     };
 
-    const HomePage = () => (
+    const homePageContent = (
         <div className="min-h-screen font-sans selection:bg-gki-tan">
             {/* Nav */}
             <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-gki-wood py-3 shadow-lg' : 'bg-transparent py-5'}`}>
                 <div className="container mx-auto px-6 flex items-center justify-between text-white">
-                    <div className="flex items-center gap-3">
+                    <a
+                        href="#home"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setActiveNavSection('home');
+                            document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="flex items-center gap-3 cursor-pointer no-underline text-white hover:opacity-90 transition-opacity"
+                        title="Ke Beranda GKI Gejayan"
+                    >
                         <img src="/logo polos.PNG" alt="Logo" className="h-10 invert" />
                         <span className="font-serif text-xl tracking-wider uppercase hidden sm:block">GKI Gejayan</span>
-                    </div>
+                    </a>
 
                     {/* Desktop Nav Items with Dynamic Sliding Pill Highlight */}
                     <div className="hidden md:flex items-center gap-2 font-sans text-base lg:text-lg">
@@ -184,8 +194,8 @@ const App = () => {
                             { id: 'events', label: 'Kegiatan', href: '#events' },
                             { id: 'ministries', label: 'Pelayanan', href: '#ministries' },
                             { id: 'office', label: 'Kantor & Staf', href: '#office' },
-                            { id: 'contact', label: 'Kontak', href: '#contact' },
                             { id: 'schedule', label: 'Jadwal', href: '#schedule' },
+                            { id: 'contact', label: 'Kontak', href: '#contact' },
                         ].map((item) => {
                             const isActive = activeNavSection === item.id;
                             if (item.isDropdown) {
@@ -292,8 +302,8 @@ const App = () => {
                                 { id: 'events', label: 'Kegiatan', href: '#events' },
                                 { id: 'ministries', label: 'Pelayanan', href: '#ministries' },
                                 { id: 'office', label: 'Kantor & Staf', href: '#office' },
-                                { id: 'contact', label: 'Kontak', href: '#contact' },
                                 { id: 'schedule', label: 'Jadwal', href: '#schedule' },
+                                { id: 'contact', label: 'Kontak', href: '#contact' },
                             ].map((item) => {
                                 const isActive = activeNavSection === item.id;
                                 if (item.isDropdown) {
@@ -359,7 +369,7 @@ const App = () => {
                                 <span className="text-gki-tan font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
                                     {events[currentIdx]?.description}
                                 </span>
-                                <h1 className="text-5xl md:text-8xl font-serif mb-6 leading-tight">
+                                <h1 className="text-3xl sm:text-6xl md:text-8xl font-serif mb-6 leading-tight">
                                     {events[currentIdx]?.title}
                                 </h1>
                                 <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 font-light italic">
@@ -977,12 +987,12 @@ const App = () => {
                                     </a>
                                 </div>
                             </div>
-                            <div className="mt-16 w-full text-center block">
-                                <p className="text-sm font-medium tracking-wide text-white/50 italic inline-block mx-auto">
-                                    @GKI Gejayan | by Natanael Nainggolan
-                                </p>
-                            </div>
                         </div>
+                    </div>
+                    <div className="mt-16 w-full text-center block">
+                        <p className="text-sm font-medium tracking-wide text-white/50 italic inline-block mx-auto">
+                            @GKI Gejayan | by Natanael Nainggolan
+                        </p>
                     </div>
                 </div>
             </section>
@@ -1149,7 +1159,7 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={<HomePage />} />
+                    <Route path="/" element={homePageContent} />
                     <Route path="/login" element={<Login />} />
                     <Route element={<ProtectedRoute />}>
                         <Route path="/admin" element={<AdminDashboard />} />

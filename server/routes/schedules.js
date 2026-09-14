@@ -6,7 +6,9 @@ const auth = require('../middleware/auth');
 // Get all schedules
 router.get('/', async (req, res) => {
     try {
-        const schedules = await Schedule.findAll();
+        const schedules = await Schedule.findAll({
+            order: [['order', 'ASC'], ['id', 'ASC']]
+        });
         res.json(schedules);
     } catch (error) {
         res.status(500).json({ message: error.message });

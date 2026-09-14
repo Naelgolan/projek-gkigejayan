@@ -7,7 +7,7 @@ const ManageSchedules = () => {
     const [schedules, setSchedules] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingSchedule, setEditingSchedule] = useState(null);
-    const [formData, setFormData] = useState({ type: '', time: '', day: '', location: '', youtubeLink: '', image: '' });
+    const [formData, setFormData] = useState({ type: '', time: '', day: '', location: '', youtubeLink: '', image: '', order: 1 });
     const { token } = useContext(AuthContext);
 
     useEffect(() => {
@@ -23,15 +23,42 @@ const ManageSchedules = () => {
         }
     };
 
+    const resetForm = () => {
+        setEditingSchedule(null);
+        setFormData({ type: '', time: '', day: '', location: '', youtubeLink: '', image: '', order: schedules.length + 1 });
+    };
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onloadend = () => {
-            setFormData(prev => ({
-                ...prev,
-                image: reader.result
-            }));
+            const img = new Image();
+            img.src = reader.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const maxDim = 1200;
+                let width = img.width;
+                let height = img.height;
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                setFormData(prev => ({
+                    ...prev,
+                    image: compressedBase64
+                }));
+            };
         };
         reader.readAsDataURL(file);
     };
@@ -46,8 +73,7 @@ const ManageSchedules = () => {
                 await axios.post('/api/schedules', formData, config);
             }
             setIsModalOpen(false);
-            setEditingSchedule(null);
-            setFormData({ type: '', time: '', day: '', location: '', youtubeLink: '', image: '' });
+            resetForm();
             fetchSchedules();
         } catch (err) {
             console.error('Submit error:', err.response?.data || err);
@@ -73,7 +99,8 @@ const ManageSchedules = () => {
             day: sch.day, 
             location: sch.location, 
             youtubeLink: sch.youtubeLink || '', 
-            image: sch.image || '' 
+            image: sch.image || '',
+            order: sch.order !== undefined && sch.order !== null ? sch.order : 1
         });
         setIsModalOpen(true);
     };
@@ -81,9 +108,12 @@ const ManageSchedules = () => {
     return (
         <div className="p-8">
             <div className="flex justify-between items-center mb-8">
-                <h2 className="text-4xl font-serif text-gki-wood">Kelola Jadwal</h2>
+                <div>
+                    <h2 className="text-4xl font-serif text-gki-wood">Kelola Jadwal Ibadah</h2>
+                    <p className="text-gki-stone text-sm mt-1">Atur urutan tampilan jadwal ibadah dan informasi pelaksanaan.</p>
+                </div>
                 <button
-                    onClick={() => { setEditingSchedule(null); setFormData({ type: '', time: '', day: '', location: '', youtubeLink: '', image: '' }); setIsModalOpen(true); }}
+                    onClick={() => { resetForm(); setIsModalOpen(true); }}
                     className="flex items-center gap-2 bg-gki-wood text-white px-6 py-3 rounded-full hover:bg-gki-tan transition-all shadow-lg font-bold"
                 >
                     <Plus size={20} /> TAMBAH JADWAL
@@ -91,11 +121,16 @@ const ManageSchedules = () => {
             </div>
 
             <div className="grid gap-4">
-                {schedules.map((sch) => (
+                {schedules.map((sch, idx) => (
                     <div key={sch.id} className="bg-white p-6 rounded-2xl shadow-md flex justify-between items-center border border-gki-cement/20">
                         <div className="flex items-center gap-6">
                             <img src={sch.image || '/luar.jpg'} alt={sch.type} className="w-16 h-16 rounded-xl object-cover bg-gki-cement border" />
                             <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="px-2.5 py-0.5 bg-gki-tan/10 text-gki-tan text-xs font-bold rounded-full border border-gki-tan/20">
+                                        Urutan #{sch.order !== undefined && sch.order !== null ? sch.order : idx + 1}
+                                    </span>
+                                </div>
                                 <h3 className="text-2xl font-serif text-gki-wood">{sch.type}</h3>
                                 <p className="text-gki-stone text-base">{sch.day}, {sch.time} - {sch.location}</p>
                                 {sch.youtubeLink && (
@@ -104,10 +139,10 @@ const ManageSchedules = () => {
                             </div>
                         </div>
                         <div className="flex gap-2">
-                            <button onClick={() => openEdit(sch)} className="p-2 text-gki-stone hover:text-gki-tan transition-all">
+                            <button onClick={() => openEdit(sch)} className="p-2 text-gki-stone hover:text-gki-tan transition-all" title="Edit Jadwal">
                                 <Edit2 size={20} />
                             </button>
-                            <button onClick={() => handleDelete(sch.id)} className="p-2 text-red-400 hover:text-red-500 transition-all">
+                            <button onClick={() => handleDelete(sch.id)} className="p-2 text-red-400 hover:text-red-500 transition-all" title="Hapus Jadwal">
                                 <Trash2 size={20} />
                             </button>
                         </div>
@@ -117,12 +152,25 @@ const ManageSchedules = () => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg relative">
+                    <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
                         <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-gki-stone">
                             <X size={24} />
                         </button>
                         <h2 className="text-3xl font-serif text-gki-wood mb-6">{editingSchedule ? 'Edit Jadwal' : 'Tambah Jadwal'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-base font-medium mb-1">Urutan Tampil (Order Number)</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-gki-tan"
+                                    value={formData.order}
+                                    onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 1 })}
+                                    required
+                                />
+                                <p className="text-xs text-gki-stone mt-1">Urutan angka paling kecil (misal: 1, 2, 3) akan berada di paling depan.</p>
+                            </div>
+
                             <div>
                                 <label className="block text-base font-medium mb-1">Tipe Ibadah</label>
                                 <input
@@ -198,7 +246,7 @@ const ManageSchedules = () => {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-gki-wood text-white py-3 rounded-lg font-bold hover:bg-gki-tan transition-all mt-4"
+                                className="w-full bg-gki-wood text-white py-3 rounded-lg font-bold hover:bg-gki-tan transition-all mt-4 cursor-pointer"
                             >
                                 {editingSchedule ? 'SIMPAN PERUBAHAN' : 'TAMBAH JADWAL'}
                             </button>

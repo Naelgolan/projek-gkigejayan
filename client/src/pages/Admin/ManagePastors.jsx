@@ -105,9 +105,69 @@ const ManagePastors = () => {
                                 <label className="block text-sm font-medium mb-1">Deskripsi/Profil Singkat (Bio)</label>
                                 <textarea className="w-full px-4 py-2 border rounded-lg" value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} rows="3"></textarea>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">URL Foto (Image)</label>
-                                <input type="text" className="w-full px-4 py-2 border rounded-lg" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} placeholder="https://..." />
+                            <div className="p-4 bg-gki-cream/30 border border-gki-tan/30 rounded-xl space-y-3">
+                                <label className="block text-sm font-bold text-gki-wood">Foto Pendeta</label>
+                                
+                                <div>
+                                    <span className="text-xs font-semibold text-gki-stone block mb-1">A. Pilih File Gambar dari Perangkat (Laptop/HP):</span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    const img = new Image();
+                                                    img.src = reader.result;
+                                                    img.onload = () => {
+                                                        const canvas = document.createElement('canvas');
+                                                        const maxDim = 1200;
+                                                        let width = img.width;
+                                                        let height = img.height;
+                                                        if (width > maxDim || height > maxDim) {
+                                                            if (width > height) { height = Math.round((height * maxDim) / width); width = maxDim; }
+                                                            else { width = Math.round((width * maxDim) / height); height = maxDim; }
+                                                        }
+                                                        canvas.width = width;
+                                                        canvas.height = height;
+                                                        const ctx = canvas.getContext('2d');
+                                                        ctx.drawImage(img, 0, 0, width, height);
+                                                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                                                        setFormData(prev => ({ ...prev, image: compressedBase64 }));
+                                                    };
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                        className="w-full text-xs text-gki-wood file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gki-wood file:text-white hover:file:bg-gki-tan cursor-pointer"
+                                    />
+                                </div>
+
+                                <div className="relative flex py-1 items-center">
+                                    <div className="flex-grow border-t border-gki-tan/20"></div>
+                                    <span className="flex-shrink mx-3 text-xs text-gki-stone uppercase font-bold">atau</span>
+                                    <div className="flex-grow border-t border-gki-tan/20"></div>
+                                </div>
+
+                                <div>
+                                    <span className="text-xs font-semibold text-gki-stone block mb-1">B. URL Gambar (Link External):</span>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-2 border rounded-lg text-sm bg-white"
+                                        value={formData.image}
+                                        onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                                        placeholder="https://..."
+                                    />
+                                </div>
+
+                                {formData.image && (
+                                    <div className="mt-2 flex items-center gap-3 p-2 bg-white rounded-lg border border-gki-tan/20 shadow-sm">
+                                        <span className="text-xs font-semibold text-gki-wood">Preview Foto:</span>
+                                        <img src={formData.image} alt="Preview" className="h-12 w-12 object-cover rounded-full border shadow-sm" />
+                                        <span className="text-xs text-emerald-600 font-medium">Foto Siap Dipakai</span>
+                                    </div>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Urutan Tampil (Order)</label>
